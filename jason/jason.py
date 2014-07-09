@@ -6,15 +6,18 @@ class JasonResourceQuerySelector(object):
   def __init__(self, resource):
     self.resource = resource
 
-  def all(self):
+  def filter(self, **kwargs):
     url = 'http://%s/%s' % (self.resource.service, self.resource.get_endpoint())
-    response = requests.get(url)
+    response = requests.get(url, params=kwargs)
 
     objects = []
     for obj in response.json():
       objects.append(self.resource(obj))
     return objects
 
+
+  def all(self):
+    return self.filter()
 
 class JasonResourceMeta(type):
   def __new__(cls, name, bases, dct):
