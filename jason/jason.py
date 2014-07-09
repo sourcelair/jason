@@ -22,12 +22,34 @@ class JasonResourceMeta(type):
     new_class.objects = JasonResourceQuerySelector(new_class)
     return new_class
 
-class JasonResource(object):
 
-  __metaclass__ = JasonResourceMeta
+class JasonGenericResource(object):
+
+  _serializers = {}
 
   def __init__(self, data):
     self._data = data
+
+    for key in self._data:
+      value = self._data[key]
+      value_type = type(value)
+
+      if (value_type in self._serializers):
+        value = self._serializers[value_type](value)
+
+      setattr(self, key, value)
+
+  @classmethod
+  def register_serializer(cls, object_type, serializer):
+    cls._serializers[object_type] = serializer
+
+
+class JasonEmbeddedResource(JasonGenericResource):
+  pass
+
+class JasonResource(JasonGenericResource):
+
+  __metaclass__ = JasonResourceMeta
 
   @classmethod
   def get_resource(cls):
@@ -40,6 +62,7 @@ class JasonResource(object):
       value = '%s/%s' % (cls.host.root, value)
     return value
 
+JasonGenericResource.register_serializer(dict, JasonEmbeddedResource)
 
 class Host(object):
 
