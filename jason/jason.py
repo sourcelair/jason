@@ -7,7 +7,7 @@ class JasonResourceQuerySelector(object):
     self.resource = resource
 
   def all(self):
-    url = 'http://%s/%s' % (self.resource.host, self.resource.get_endpoint())
+    url = 'http://%s/%s' % (self.resource.service, self.resource.get_endpoint())
     response = requests.get(url)
 
     objects = []
@@ -58,13 +58,13 @@ class JasonResource(JasonGenericResource):
   @classmethod
   def get_endpoint(cls):
     value = '%s' % cls.get_resource()
-    if (cls.host.root):
-      value = '%s/%s' % (cls.host.root, value)
+    if (cls.service.root):
+      value = '%s/%s' % (cls.service.root, value)
     return value
 
 JasonGenericResource.register_serializer(dict, JasonEmbeddedResource)
 
-class Host(object):
+class Service(object):
 
   def __init__(self, host='localhost', root=None):
     self.host = host
@@ -74,7 +74,7 @@ class Host(object):
       host = None
       objects = None
 
-    Resource.host = self
+    Resource.service = self
 
     self.Resource = Resource
 
