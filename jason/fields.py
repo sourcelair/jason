@@ -12,19 +12,10 @@ class BaseField(object):
     return is_string
 
   def _evaluate(self, value):
-    if (value is None):
-      self._value = value
-      self._string_value = None
-      return
-
     if (self._is_string(value)):
-      string_value = value
-      value = self.serialize(string_value)
+      self._value = self.serialize(value)
     else:
-      string_value = self.deserialize(value)
-
-    self._value = value
-    self._string_value = string_value
+      self._value = value
 
   def __get__(self, instance, owner):
     return self._value
@@ -32,11 +23,11 @@ class BaseField(object):
   def __set__(self, instance, value):
     self._evaluate(value)
 
-  def serialize(self):
-    raise NotImplemented()
+  def serialize(self, value):
+    return value
 
   def deserialize(self):
-    raise NotImplemented()
+    return self._value
 
 
 class DateTimeField(BaseField):

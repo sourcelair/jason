@@ -1,2 +1,2 @@
 # Jason
-Jason is a thin object mapper for REST resources
+Jason is a thin object mapper for REST services

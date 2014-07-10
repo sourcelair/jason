@@ -1,28 +1,10 @@
-import requests
+from queryselectors import JasonQuerySelector
 
-
-class JasonResourceQuerySelector(object):
-
-  def __init__(self, resource):
-    self.resource = resource
-
-  def filter(self, **kwargs):
-    url = 'http://%s/%s' % (self.resource.service, self.resource.get_endpoint())
-    response = requests.get(url, params=kwargs)
-
-    objects = []
-    for obj in response.json():
-      objects.append(self.resource(obj))
-    return objects
-
-
-  def all(self):
-    return self.filter()
 
 class JasonResourceMeta(type):
   def __new__(cls, name, bases, dct):
     new_class = type.__new__(cls, name, bases, dct)
-    new_class.objects = JasonResourceQuerySelector(new_class)
+    new_class.objects = JasonQuerySelector(new_class)
     return new_class
 
 
@@ -66,23 +48,3 @@ class JasonResource(JasonGenericResource):
     return value
 
 JasonGenericResource.register_serializer(dict, JasonEmbeddedResource)
-
-class Service(object):
-
-  def __init__(self, host='localhost', root=None):
-    self.host = host
-    self.root = root
-
-    class Resource(JasonResource):
-      host = None
-      objects = None
-
-    Resource.service = self
-
-    self.Resource = Resource
-
-  def __unicode__(self):
-    return self.host
-
-  def __str__(self):
-    return self.__unicode__()
