@@ -40,7 +40,7 @@ class BaseField(object):
 
 class DateTimeField(BaseField):
 
-  _pattern = r'^(\d\d\d\d)-(\d\d)-(\d\d)[\sT](\d\d):(\d\d):(\d\d)Z?$'
+  _pattern = r'^(\d\d\d\d)-(\d\d)-(\d\d)[\sT](\d\d):(\d\d):(\d\d)'
 
   def serialize(self, value):
     matches = re.search(self._pattern, value)
@@ -54,7 +54,7 @@ class DateTimeField(BaseField):
 
 
   def deserialize(self):
-    value = '%d-%02d-%02dT%02d:%02d:%02dZ' % (self._value.year,
+    value = '%d-%02d-%02dT%02d:%02d:%02d' % (self._value.year,
                                               self._value.month,
                                               self._value.day,
                                               self._value.hour,
