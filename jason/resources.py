@@ -1,9 +1,17 @@
+from fields import BaseField
 from queryselectors import JasonQuerySelector
 
 
 class JasonResourceMeta(type):
   def __new__(cls, name, bases, dct):
     new_class = type.__new__(cls, name, bases, dct)
+
+    # Set names to attributes
+    for (key, value) in new_class.__dict__.iteritems():
+        if (isinstance(value, BaseField)):
+            value.name = key
+
+    # Set default query selector
     new_class.objects = JasonQuerySelector(new_class)
     return new_class
 

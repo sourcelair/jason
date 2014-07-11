@@ -4,6 +4,8 @@ import re
 
 class BaseField(object):
 
+  name = None
+
   def __init__(self, value=None):
     self._evaluate(value)
 
@@ -20,7 +22,7 @@ class BaseField(object):
   def __get__(self, instance, owner):
     if (instance is None):
       return self
-    return self._value
+    return self.serialize(instance._data.get(self.name))
 
   def __set__(self, instance, value):
     self._evaluate(value)
@@ -54,6 +56,8 @@ class DateTimeField(BaseField):
 
 
   def deserialize(self):
+    if (self._value is None):
+        return None
     value = '%d-%02d-%02dT%02d:%02d:%02d' % (self._value.year,
                                               self._value.month,
                                               self._value.day,
