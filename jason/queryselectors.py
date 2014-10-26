@@ -12,7 +12,10 @@ class JasonQuerySelector(object):
         self.resource = resource
 
     def filter(self, **kwargs):
-        url = 'http://%s/%s' % (self.resource.service, self.resource.get_endpoint())
+        url = '%s/%s' % (
+            self.resource.service.base_url,
+            self.resource.get_endpoint()
+        )
         params = {}
         for arg in kwargs:
             field_query_pattern = r'^(\w+)__.+$'
