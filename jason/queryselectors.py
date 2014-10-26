@@ -1,8 +1,6 @@
-import re
-
-import requests
-
 import fields
+import re
+import requests
 
 
 class JasonQuerySelector(object):
