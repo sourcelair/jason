@@ -14,7 +14,7 @@ class JasonQuerySelector(object):
     def filter(self, **kwargs):
         url = '%s/%s' % (
             self.resource.service.base_url,
-            self.resource.get_endpoint()
+            self.resource.get_root()
         )
         params = {}
         for arg in kwargs:

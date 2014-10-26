@@ -49,16 +49,27 @@ class JasonResource(JasonGenericResource):
         return '%ss' % cls.__name__.lower()
 
     @classmethod
-    def get_endpoint(cls):
+    def get_root(cls):
         
-        if hasattr(cls, '_endpoint'):
-            return cls._endpoint
+        if hasattr(cls, '_root'):
+            return cls._root
 
         value = '%s' % cls.get_resource()
 
-        if (cls.service.root):
+        if cls.service.root:
             value = '%s/%s' % (cls.service.root, value)
 
         return value
+    
+    def __unicode__(self):
+        repr = (self.service.__class__.__name__, self.__class__.__name__)
+        return '<%s.%s object>' % repr
+    
+    def __str__(self):
+        return self.__unicode__()
+    
+    def __repr__(self):
+        return self.__unicode()
+    
 
 JasonGenericResource.register_serializer(dict, JasonEmbeddedResource)
