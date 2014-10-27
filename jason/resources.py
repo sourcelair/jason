@@ -62,14 +62,14 @@ class JasonResource(JasonGenericResource):
         return value
     
     def __unicode__(self):
-        repr = (self.service.__class__.__name__, self.__class__.__name__)
-        return '<%s.%s object>' % repr
+        repr = (self.__class__.__name__, self.service.base_url)
+        return '<%s at %s>' % repr
     
     def __str__(self):
         return self.__unicode__()
     
     def __repr__(self):
-        return self.__unicode()
+        return self.__unicode__()
     
 
 JasonGenericResource.register_serializer(dict, JasonEmbeddedResource)

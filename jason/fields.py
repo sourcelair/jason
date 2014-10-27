@@ -40,6 +40,9 @@ class BaseField(object):
         return self.__unicode__()
 
 
+class StringField(BaseField):
+    pass
+
 class DateTimeField(BaseField):
 
     _pattern = r'^(\d\d\d\d)-(\d\d)-(\d\d)[\sT](\d\d):(\d\d):(\d\d)'
