@@ -19,3 +19,18 @@ two_days_ago = datetime.now() - timedelta(days=2)
 
 recent_users = User.objects.filter(created__gte=two_days_ago)
 ```
+
+## Examples
+
+### Quering the GitHub API
+
+```python
+from github.models import GitHubUser
+
+
+user = GitHubUser.objects.all()[0]
+
+
+for repo in user.get_repos():
+    print repo.name
+```
