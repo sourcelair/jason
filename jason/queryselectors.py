@@ -11,11 +11,7 @@ class JasonQuerySelector(object):
     def __init__(self, resource):
         self.resource = resource
 
-    def filter(self, **kwargs):
-        url = '%s/%s' % (
-            self.resource.service.base_url,
-            self.resource.get_root()
-        )
+    def query_at(self, url, **kwargs):
         params = {}
         for arg in kwargs:
             field_query_pattern = r'^(\w+)__.+$'
@@ -38,8 +34,15 @@ class JasonQuerySelector(object):
 
         objects = []
         for obj in response.json():
-            objects.append(self.resource(obj))
+            objects.append(self.resource(**obj))
         return objects
+
+    def filter(self, **kwargs):
+        url = '%s/%s' % (
+            self.resource.service.base_url,
+            self.resource.get_root()
+        )
+        return self.query_at(url, **kwargs)
 
     def get(self, **kwargs):
         objects = self.filter(**kwargs)

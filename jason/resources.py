@@ -20,7 +20,10 @@ class JasonGenericResource(object):
 
     _serializers = {}
 
-    def __init__(self, data):
+    def __init__(self, **data):
+        """
+        Initialize a new Jason resource with arbitrary data.
+        """
         self._data = data
 
         for key in self._data:
@@ -38,15 +41,13 @@ class JasonGenericResource(object):
 
 
 class JasonEmbeddedResource(JasonGenericResource):
-    pass
+    def __init__(self, dict_obj):
+        super(JasonEmbeddedResource, self).__init__(**dict_obj)
+
 
 class JasonResource(JasonGenericResource):
 
     __metaclass__ = JasonResourceMeta
-
-    @classmethod
-    def get_resource(cls):
-        return '%ss' % cls.__name__.lower()
 
     @classmethod
     def get_root(cls):
@@ -54,7 +55,7 @@ class JasonResource(JasonGenericResource):
         if hasattr(cls, '_root'):
             return cls._root
 
-        value = '%s' % cls.get_resource()
+        value = '%ss' % cls.__name__.lower()
 
         if cls.service.root:
             value = '%s/%s' % (cls.service.root, value)
