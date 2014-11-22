@@ -13,35 +13,40 @@ class JasonQuerySelector(object):
 
     def query_at(self, url, **kwargs):
         params = {}
+
         for arg in kwargs:
             field_query_pattern = r'^(\w+)__.+$'
             field_query_search = re.search(field_query_pattern, arg)
 
-            if (field_query_search):
+            if field_query_search:
                 field = field_query_search.groups()[0]
             else:
                 field = arg
 
             value = kwargs[arg]
-            if (hasattr(self.resource, field)):
+
+            if hasattr(self.resource, field):
                 attribute = getattr(self.resource, field)
-            if (isinstance(attribute, fields.BaseField)):
-                value = attribute.__class__(value).deserialize()
+
+            if isinstance(attribute, fields.BaseField):
+                field_instance = attribute.__class__(value)
+                value = field_instance.deserialize()
+
+                if attribute._query_field:
+                    arg = attribute._query_field
 
             params[arg] = value
 
         response = requests.get(url, params=params)
-
         objects = []
+
         for obj in response.json():
             objects.append(self.resource(**obj))
+
         return objects
 
     def filter(self, **kwargs):
-        url = '%s/%s' % (
-            self.resource.service.base_url,
-            self.resource.get_root()
-        )
+        url = self.resource.get_root()
         return self.query_at(url, **kwargs)
 
     def get(self, **kwargs):

@@ -6,8 +6,9 @@ class BaseField(object):
 
     name = None
 
-    def __init__(self, value=None):
+    def __init__(self, value=None, query_field=None):
         self._evaluate(value)
+        self._query_field = query_field
 
     def _is_string(self, value):
         is_string = ((type(value) is str) or (type(value) is unicode))

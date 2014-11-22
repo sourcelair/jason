@@ -58,7 +58,7 @@ class JasonResource(JasonGenericResource):
         value = '%ss' % cls.__name__.lower()
 
         if cls.service.root:
-            value = '%s/%s' % (cls.service.root, value)
+            value = '%s/%s' % (cls.service.base_url, value)
 
         return value
     
