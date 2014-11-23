@@ -5,9 +5,6 @@ import requests
 
 class JasonQuerySelector(object):
 
-    class MultipleItemsReturned(Exception):
-        pass
-
     def __init__(self, resource):
         self.resource = resource
 
@@ -51,8 +48,13 @@ class JasonQuerySelector(object):
 
     def get(self, **kwargs):
         objects = self.filter(**kwargs)
-        if (len(objects) > 1):
-            raise self.MultipleItemsReturned
+
+        if len(objects) > 1:
+            raise self.resource.MultipleItemsReturned
+
+        if len(objects) is 0:
+            raise self.resource.NotFound
+
         return objects[0]
 
     def all(self):

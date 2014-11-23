@@ -1,5 +1,6 @@
 from fields import BaseField
 from queryselectors import JasonQuerySelector
+import exceptions
 
 
 class JasonResourceMeta(type):
@@ -17,6 +18,8 @@ class JasonResourceMeta(type):
 
 
 class JasonGenericResource(object):
+
+    NotFound = exceptions.NotFound
 
     _serializers = {}
 
