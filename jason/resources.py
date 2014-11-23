@@ -20,6 +20,7 @@ class JasonResourceMeta(type):
 class JasonGenericResource(object):
 
     NotFound = exceptions.NotFound
+    MultipleItemsReturned = exceptions.MultipleItemsReturned
 
     _serializers = {}
 
