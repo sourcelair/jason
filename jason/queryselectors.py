@@ -34,7 +34,17 @@ class JasonQuerySelector(object):
 
             params[arg] = value
 
-        response = requests.get(url, params=params)
+        request_kwargs = {
+            'params': params
+        }
+        # Set-up authentication for the request
+        if hasattr(self.resource, '_auth'):
+            if callable(self.resource._auth):
+                request_kwargs['auth'] = self.resource._auth(url, **kwargs)
+            else:
+                request_kwargs['auth'] = self.resource._auth
+
+        response = requests.get(url, **request_kwargs)
         objects = []
 
         for obj in response.json():
