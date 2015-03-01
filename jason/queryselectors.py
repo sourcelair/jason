@@ -47,7 +47,12 @@ class JasonQuerySelector(object):
         response = requests.get(url, **request_kwargs)
         objects = []
 
-        for obj in response.json():
+        if hasattr(self.resource, '_post_process_response'):
+            returned_objects = self.resource._post_process_response(response)
+        else:
+            returned_objects = response.json()
+
+        for obj in returned_objects:
             objects.append(self.resource(**obj))
 
         return objects
