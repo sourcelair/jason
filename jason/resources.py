@@ -46,6 +46,10 @@ class JasonGenericResource(object):
 
 class JasonEmbeddedResource(JasonGenericResource):
     def __init__(self, dict_obj):
+        # Take care of edge case
+        if 'self' in dict_obj:
+            dict_obj['_self'] = dict_obj['self']
+            del dict_obj['self']
         super(JasonEmbeddedResource, self).__init__(**dict_obj)
 
 
