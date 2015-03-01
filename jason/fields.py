@@ -44,6 +44,13 @@ class BaseField(object):
 class StringField(BaseField):
     pass
 
+class IntegerField(BaseField):
+    def serialize(self, value):
+        return int(value)
+
+    def deserialize(self):
+        return str(self._value)
+
 class DateTimeField(BaseField):
 
     _pattern = r'^(\d\d\d\d)-(\d\d)-(\d\d)[\sT](\d\d):(\d\d):(\d\d)'
