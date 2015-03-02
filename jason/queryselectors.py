@@ -37,6 +37,7 @@ class JasonQuerySelector(object):
         request_kwargs = {
             'params': params
         }
+
         # Set-up authentication for the request
         if hasattr(self.resource, '_auth'):
             if callable(self.resource._auth):
@@ -44,7 +45,14 @@ class JasonQuerySelector(object):
             else:
                 request_kwargs['auth'] = self.resource._auth
 
-        response = requests.get(url, **request_kwargs)
+        session = requests.Session()
+        request = requests.Request('get', url, **request_kwargs)
+
+        # Apply additional pre-processing (if set)
+        if hasattr(self.resource, '_pre_process_request'):
+            request = self.resource._pre_process_request(request)
+
+        response = session.send(request.prepare())
         objects = []
 
         if hasattr(self.resource, '_post_process_response'):
