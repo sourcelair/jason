@@ -27,7 +27,7 @@ class JasonQuerySelector(object):
 
             if isinstance(attribute, fields.BaseField):
                 field_instance = attribute.__class__(value)
-                value = field_instance.deserialize()
+                value = field_instance.serialize()
 
                 if attribute.query_field:
                     arg = attribute.query_field

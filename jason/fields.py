@@ -26,7 +26,7 @@ class BaseField(object):
 
     def _evaluate(self, value):
         if self._is_string(value):
-            self._value = self.serialize(value)
+            self._value = self.deserialize(value)
         else:
             self._value = value
 
@@ -36,12 +36,12 @@ class BaseField(object):
         )
         # If this field is accessed using the class, or if it does not belong
         # to a Jason Resource, then return itself, else return its
-        # serialized representation
+        # deserialized representation
         if instance is None or not instance_is_jason_resource:
             return self
         else:
             value = instance._data.get(self.name)
-            # In any case do not attempt to serialize ``None``
+            # In any case do not attempt to deserialize ``None``
             if value is None:
                 # If this field is None and required, then raise a validation
                 # error
@@ -49,37 +49,37 @@ class BaseField(object):
                     raise exceptions.ValidationError
                 else:
                     return None
-            return self.serialize(value)
+            return self.deserialize(value)
 
     def __set__(self, instance, value):
         self._evaluate(value)
 
-    def serialize(self, value):
+    def deserialize(self, value):
         raise NotImplementedError()
 
-    def deserialize(self):
+    def serialize(self):
         raise NotImplementedError()
 
     def __unicode__(self):
-        return self.deserialize()
+        return self.serialize()
 
     def __str__(self):
         return self.__unicode__()
 
 
 class StringField(BaseField):
-    def serialize(self, value):
+    def deserialize(self, value):
         return value
 
-    def deserialize(self):
+    def serialize(self):
         return self._value
 
 
 class IntegerField(BaseField):
-    def serialize(self, value):
+    def deserialize(self, value):
         return int(value)
 
-    def deserialize(self):
+    def serialize(self):
         return str(self._value)
 
 
@@ -87,7 +87,7 @@ class DateTimeField(BaseField):
 
     _pattern = r'^(\d\d\d\d)-(\d\d)-(\d\d)[\sT](\d\d):(\d\d):(\d\d)'
 
-    def serialize(self, value):
+    def deserialize(self, value):
         matches = re.search(self._pattern, value)
         if (matches):
             matches = matches.groups()
@@ -98,7 +98,7 @@ class DateTimeField(BaseField):
         return datetime(year, month, day, hour, minute, seconds)
 
 
-    def deserialize(self):
+    def serialize(self):
         if (self._value is None):
               return None
         value = '%d-%02d-%02dT%02d:%02d:%02d' % (self._value.year,
@@ -114,7 +114,7 @@ class BooleanField(BaseField):
     """
     Implements field for serializing and desirializing boolean values.
     """
-    def serialize(self, value):
+    def deserialize(self, value):
         if type(value) is bool:
             return value
         elif type(value) in [str, unicode]:
@@ -124,13 +124,13 @@ class BooleanField(BaseField):
             # Attempt to match case-insensitive string with False
             if re.match(r'^false$', value, re.IGNORECASE):
                 return False
-        # Let the user know that the given value cannot be serialized into
+        # Let the user know that the given value cannot be deserialized into
         # boolean
-        err = 'Value "%s" of type "%s", could not be serialized into boolean'
+        err = 'Value "%s" of type "%s", could not be deserialized into boolean'
         err = err % (value, type(value))
         raise self.InvalidData(err)
 
-    def deserialize(self):
+    def serialize(self):
         if self._value:
             return 'true'
         else:
