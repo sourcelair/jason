@@ -29,8 +29,8 @@ class JasonQuerySelector(object):
                 field_instance = attribute.__class__(value)
                 value = field_instance.deserialize()
 
-                if attribute._query_field:
-                    arg = attribute._query_field
+                if attribute.query_field:
+                    arg = attribute.query_field
 
             params[arg] = value
 

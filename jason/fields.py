@@ -1,4 +1,5 @@
 from datetime import datetime
+import exceptions
 import re
 
 
@@ -13,24 +14,38 @@ class BaseField(object):
         """
         pass
 
-    def __init__(self, value=None, query_field=None):
+    def __init__(self, value=None, query_field=None, required=False):
         self._evaluate(value)
-        self._query_field = query_field
+        self.query_field = query_field
+        self.required = required
 
     def _is_string(self, value):
         is_string = ((type(value) is str) or (type(value) is unicode))
         return is_string
 
     def _evaluate(self, value):
-        if (self._is_string(value)):
+        if self._is_string(value):
             self._value = self.serialize(value)
         else:
             self._value = value
 
     def __get__(self, instance, owner):
-        if (instance is None):
+        # If this field is accessed using the class, then return itself, or
+        # else this field is being accessed using an instance of its class,
+        # thus return its serialized representation
+        if instance is None:
             return self
-        return self.serialize(instance._data.get(self.name))
+        else:
+            value = instance._data.get(self.name)
+            # In any case do not attempt to serialize ``None``
+            if value is None:
+                # If this field is None and required, then raise a validation
+                # error
+                if self.required:
+                    raise exceptions.ValidationError
+                else:
+                    return None
+            return self.serialize(value)
 
     def __set__(self, instance, value):
         self._evaluate(value)
