@@ -6,6 +6,13 @@ class BaseField(object):
 
     name = None
 
+    class InvalidData(Exception):
+        """
+        Should be raised, when invalid data is passed to the fied for
+        serialization or deserialization.
+        """
+        pass
+
     def __init__(self, value=None, query_field=None):
         self._evaluate(value)
         self._query_field = query_field
@@ -44,12 +51,14 @@ class BaseField(object):
 class StringField(BaseField):
     pass
 
+
 class IntegerField(BaseField):
     def serialize(self, value):
         return int(value)
 
     def deserialize(self):
         return str(self._value)
+
 
 class DateTimeField(BaseField):
 
@@ -76,3 +85,27 @@ class DateTimeField(BaseField):
                                                  self._value.minute,
                                                  self._value.second)
         return value
+
+
+class BooleanField(BaseField):
+    """
+    Implements field for serializing and desirializing boolean values.
+    """
+    def serialize(self, value):
+        # Attempt to match case-insensitive string with True
+        if re.match(r'^true$', value, re.IGNORECASE):
+            return True
+        # Attempt to match case-insensitive string with False
+        if re.match(r'^false$', value, re.IGNORECASE):
+            return False
+        # Let the user know that the given value cannot be serialized into
+        # boolean
+        err = 'Value "%s" of type "%s", could not be serialized into boolean'
+        err = err % (value, type(value))
+        raise self.InvalidData(err)
+
+    def deserialize(self):
+        if self._value:
+            return 'true'
+        else:
+            return 'false'
