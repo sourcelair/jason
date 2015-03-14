@@ -57,11 +57,11 @@ class BaseField(object):
     def deserialize(self, value):
         raise NotImplementedError()
 
-    def serialize(self):
+    def serialize(self, value):
         raise NotImplementedError()
 
     def __unicode__(self):
-        return self.serialize()
+        return self.serialize(self._value)
 
     def __str__(self):
         return self.__unicode__()
@@ -71,23 +71,34 @@ class StringField(BaseField):
     def deserialize(self, value):
         return value
 
-    def serialize(self):
-        return self._value
+    def serialize(self, value):
+        return value
 
 
 class IntegerField(BaseField):
     def deserialize(self, value):
         return int(value)
 
-    def serialize(self):
-        return str(self._value)
+    def serialize(self, value):
+        return str(value)
 
 
 class DateTimeField(BaseField):
+    """
+    Implements jason field for serializing and deserializing datetime values.
+    """
 
+    # Matches strings in the following form 2015-03-14T19:49:59
     _pattern = r'^(\d\d\d\d)-(\d\d)-(\d\d)[\sT](\d\d):(\d\d):(\d\d)'
 
     def deserialize(self, value):
+        if isinstance(value, datetime):
+            return value
+        elif not self._is_string(value):
+            err = 'Object of %s type cannot be deserialized to datetime'
+            err = err % type(value)
+            raise exceptions.ValidationError(err)
+
         matches = re.search(self._pattern, value)
         if (matches):
             matches = matches.groups()
@@ -95,24 +106,41 @@ class DateTimeField(BaseField):
                 int(matches[0]), int(matches[1]), int(matches[2]),
                 int(matches[3]), int(matches[4]), int(matches[5])
             )
-        return datetime(year, month, day, hour, minute, seconds)
+            return datetime(year, month, day, hour, minute, seconds)
+        err = 'The given string cannot be resolved to a datetime object'
+        raise exceptions.ValidationError(err)
 
 
-    def serialize(self):
-        if (self._value is None):
-              return None
-        value = '%d-%02d-%02dT%02d:%02d:%02d' % (self._value.year,
-                                                 self._value.month,
-                                                 self._value.day,
-                                                 self._value.hour,
-                                                 self._value.minute,
-                                                 self._value.second)
+    def serialize(self, value):
+        if not isinstance(value, datetime):
+            err = 'The given is not datetime, thus it cannot be serialized'
+            raise exceptions.ValidationError(err)
+
+        year = value.year
+        month = value.month
+        day = value.day
+        # Be less strict from now on
+        if hasattr(value, 'hour'):
+            hour = value.hour
+        else:
+            hour = 0
+        if hasattr(value, 'minute'):
+            minute = value.minute
+        else:
+            minute = 0
+        if hasattr(value, 'second'):
+            second = value.second
+        else:
+            second = 0
+        value = '%d-%02d-%02dT%02d:%02d:%02d' % (
+            year, month, day, hour, minute, second
+        )
         return value
 
 
 class BooleanField(BaseField):
     """
-    Implements field for serializing and desirializing boolean values.
+    Implements jason field for serializing and desirializing boolean values.
     """
     def deserialize(self, value):
         if type(value) is bool:
@@ -130,7 +158,7 @@ class BooleanField(BaseField):
         err = err % (value, type(value))
         raise self.InvalidData(err)
 
-    def serialize(self):
+    def serialize(self, value):
         if self._value:
             return 'true'
         else:

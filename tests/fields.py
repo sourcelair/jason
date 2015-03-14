@@ -1,5 +1,79 @@
+import datetime
 import jason
+import nose
 import unittest
+
+
+class DateTimeFieldTests(unittest.TestCase):
+    def setUp(self):
+        self.field = jason.fields.DateTimeField()
+        self.sample_datetime_string = '2015-03-14T17:30:09'
+        self.sample_datetime_object = datetime.datetime(
+            year=2015, month=3, day=14, hour=17, minute=30, second=9
+        )
+
+    def test_serialization(self):
+        """
+        Ensure that a datetime object is converted to the right datetime string
+        on deserialization.
+        """
+        self.assertEqual(
+            self.field.serialize(self.sample_datetime_object),
+            self.sample_datetime_string
+        )
+
+    def test_serialization_of_wrong_type(self):
+        """
+        Ensure that attempting to serialize no-``datetime`` objects raises
+        a ``ValidationError``
+        """
+        self.assertRaises(
+            jason.exceptions.ValidationError,
+            self.field.serialize,
+            10 # An integer cannot be serialized as datetime string
+        )
+
+    def test_deserialization(self):
+        """
+        Ensure that a string is converted to the right datetime object on
+        deserialization.
+        """
+        self.assertEqual(
+            self.field.deserialize(self.sample_datetime_string),
+            self.sample_datetime_object
+        )
+
+    def test_deserialization_of_datetime(self):
+        """
+        Ensure that attempting to deserialize a datetime object returns the
+        object itself, intact
+        """
+        self.assertEqual(
+            self.field.deserialize(self.sample_datetime_object),
+            self.sample_datetime_object
+        )
+
+    def test_deserialization_of_wrong_string(self):
+        """
+        Ensure that attempting to deserialize invalid string raises a
+        ``ValidationError``
+        """
+        self.assertRaises(
+            jason.exceptions.ValidationError,
+            self.field.deserialize,
+            'i-am-not-a-date'
+        )
+
+    def test_deserialization_of_wrong_type(self):
+        """
+        Ensure that attempting to deserialize invalid type raises a
+        ``ValidationError``
+        """
+        self.assertRaises(
+            jason.exceptions.ValidationError,
+            self.field.deserialize,
+            9 # A number cannot be converted to a date
+        )
 
 
 class BooleanFieldTests(unittest.TestCase):
@@ -45,3 +119,7 @@ class BooleanFieldTests(unittest.TestCase):
         unicode or bool type, results in raising an ``InvalidData`` error.
         """
         self.assertRaises(self.field.InvalidData, self.field.deserialize, 5)
+
+
+if __name__ == '__main__':
+    nose.main()
