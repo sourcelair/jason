@@ -68,14 +68,21 @@ class BaseField(object):
 
 
 class StringField(BaseField):
+    """
+    Extremely simple jason field for handling string values. Also, converts
+    unicode to str.
+    """
     def deserialize(self, value):
-        return value
+        return str(value)
 
     def serialize(self, value):
-        return value
+        return str(value)
 
 
 class IntegerField(BaseField):
+    """
+    Implements jason field for serializing and deserializing integer values.
+    """
     def deserialize(self, value):
         return int(value)
 
