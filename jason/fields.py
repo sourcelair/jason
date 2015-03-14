@@ -36,10 +36,10 @@ class BaseField(object):
         self._evaluate(value)
 
     def serialize(self, value):
-        return value
+        raise NotImplementedError()
 
     def deserialize(self):
-        return self._value
+        raise NotImplementedError()
 
     def __unicode__(self):
         return self.deserialize()
@@ -49,7 +49,11 @@ class BaseField(object):
 
 
 class StringField(BaseField):
-    pass
+    def serialize(self, value):
+        return value
+
+    def deserialize(self):
+        return self._value
 
 
 class IntegerField(BaseField):
