@@ -4,3 +4,5 @@ python:
 install:
     - pip install -r requirements-dev.txt
 script: nosetests --all-modules tests
+notifications:
+    email: false
