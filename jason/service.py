@@ -4,9 +4,10 @@ import re
 
 class Service(object):
 
-    def __init__(self, host='localhost', root=None):
+    def __init__(self, host='localhost', root=None, auth=None):
         self.host = host
         self.root = root
+        self.auth = auth
 
         class Resource(JasonResource):
             host = None
@@ -24,7 +25,7 @@ class Service(object):
     @property
     def base_url(self):
         _base_url = self.host
-        
+
         if not re.match(r'^https?://', _base_url):
             _base_url = 'http://%s' % _base_url
         

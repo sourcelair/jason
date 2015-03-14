@@ -39,11 +39,12 @@ class JasonQuerySelector(object):
         }
 
         # Set-up authentication for the request
-        if hasattr(self.resource, '_auth'):
-            if callable(self.resource._auth):
-                request_kwargs['auth'] = self.resource._auth(url, **kwargs)
+        if hasattr(self.resource.service, 'auth'):
+            auth = self.resource.service.auth
+            if callable(auth):
+                request_kwargs['auth'] = auth(url, **kwargs)
             else:
-                request_kwargs['auth'] = self.resource._auth
+                request_kwargs['auth'] = auth
 
         session = requests.Session()
         request = requests.Request('get', url, **request_kwargs)

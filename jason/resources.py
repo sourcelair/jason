@@ -59,7 +59,7 @@ class JasonResource(JasonGenericResource):
 
     @classmethod
     def get_root(cls):
-        
+
         if hasattr(cls, '_root'):
             return cls._root
 
@@ -69,16 +69,16 @@ class JasonResource(JasonGenericResource):
             value = '%s/%s' % (cls.service.base_url, value)
 
         return value
-    
+
     def __unicode__(self):
         repr = (self.__class__.__name__, self.service.base_url)
         return '<%s at %s>' % repr
-    
+
     def __str__(self):
         return self.__unicode__()
-    
+
     def __repr__(self):
         return self.__unicode__()
-    
+
 
 JasonGenericResource.register_serializer(dict, JasonEmbeddedResource)
