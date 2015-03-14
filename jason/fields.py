@@ -92,12 +92,15 @@ class BooleanField(BaseField):
     Implements field for serializing and desirializing boolean values.
     """
     def serialize(self, value):
-        # Attempt to match case-insensitive string with True
-        if re.match(r'^true$', value, re.IGNORECASE):
-            return True
-        # Attempt to match case-insensitive string with False
-        if re.match(r'^false$', value, re.IGNORECASE):
-            return False
+        if type(value) is bool:
+            return value
+        elif type(value) in [str, unicode]:
+            # Attempt to match case-insensitive string with True
+            if re.match(r'^true$', value, re.IGNORECASE):
+                return True
+            # Attempt to match case-insensitive string with False
+            if re.match(r'^false$', value, re.IGNORECASE):
+                return False
         # Let the user know that the given value cannot be serialized into
         # boolean
         err = 'Value "%s" of type "%s", could not be serialized into boolean'
