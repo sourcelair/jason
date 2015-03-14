@@ -1,6 +1,8 @@
 # Jason
 Jason is a thin object mapper for REST services
 
+[![Build Status](https://travis-ci.org/sourcelair/jason.svg)](https://travis-ci.org/sourcelair/jason)
+
 ## Getting started
 
 ```python
@@ -34,3 +36,9 @@ user = GitHubUser.objects.all()[0]
 for repo in user.get_repos():
     print repo.name
 ```
+
+
+## Testing
+In order to run the jason tests, you have to
+  1. install the dependencies from `requirements-dev.txt` (`pip install -r requirements-dev.txt`)
+  2. run `nosetests --all-modules tests` in your terminal

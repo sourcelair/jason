@@ -1,6 +1,5 @@
 import datetime
 import jason
-import nose
 import unittest
 
 
@@ -119,7 +118,3 @@ class BooleanFieldTests(unittest.TestCase):
         unicode or bool type, results in raising an ``InvalidData`` error.
         """
         self.assertRaises(self.field.InvalidData, self.field.deserialize, 5)
-
-
-if __name__ == '__main__':
-    nose.main()
