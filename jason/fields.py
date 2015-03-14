@@ -1,6 +1,7 @@
 from datetime import datetime
 import exceptions
 import re
+import resources
 
 
 class BaseField(object):
@@ -30,10 +31,13 @@ class BaseField(object):
             self._value = value
 
     def __get__(self, instance, owner):
-        # If this field is accessed using the class, then return itself, or
-        # else this field is being accessed using an instance of its class,
-        # thus return its serialized representation
-        if instance is None:
+        instance_is_jason_resource = isinstance(
+            instance, resources.JasonGenericResource
+        )
+        # If this field is accessed using the class, or if it does not belong
+        # to a Jason Resource, then return itself, else return its
+        # serialized representation
+        if instance is None or not instance_is_jason_resource:
             return self
         else:
             value = instance._data.get(self.name)
