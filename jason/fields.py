@@ -73,10 +73,10 @@ class StringField(BaseField):
     unicode to str.
     """
     def deserialize(self, value):
-        return str(value)
+        return unicode(value)
 
     def serialize(self, value):
-        return str(value)
+        return unicode(value)
 
 
 class IntegerField(BaseField):
@@ -87,7 +87,7 @@ class IntegerField(BaseField):
         return int(value)
 
     def serialize(self, value):
-        return str(value)
+        return unicode(value)
 
 
 class DateTimeField(BaseField):
