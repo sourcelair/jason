@@ -1,0 +1,4 @@
+#! /usr/bin/env sh
+
+# Just trigger the test script
+./script/test

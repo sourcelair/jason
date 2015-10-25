@@ -1,0 +1,4 @@
+#! /usr/bin/env sh
+
+# Trigger Nose tests
+nosetests --all-modules tests
